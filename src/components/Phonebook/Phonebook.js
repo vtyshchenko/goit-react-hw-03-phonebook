@@ -8,12 +8,7 @@ import Filter from './Filter';
 
 class Phonebook extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
 
@@ -28,6 +23,16 @@ class Phonebook extends Component {
     filter: PropTypes.string,
   };
 
+  componentDidMount() {
+    let contacts = localStorage.getItem('contacts');
+    if (contacts) {
+      contacts = JSON.parse(contacts);
+      this.setState({
+        contacts: [...contacts],
+      });
+    }
+  }
+
   handleAddContact = ({ id, name, number }) => {
     const { contacts } = this.state;
 
@@ -40,6 +45,12 @@ class Phonebook extends Component {
     }
   };
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState !== this.state) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   handleOnFiler = event => {
     this.setState({ filter: event.target.value });
   };
@@ -48,6 +59,8 @@ class Phonebook extends Component {
     this.setState(previousState => ({
       contacts: previousState.contacts.filter(contactItem => contactItem.id !== id),
     }));
+    console.log(this.state.contacts);
+    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
   };
 
   getFilteredContacts(filterLC, contacts) {
@@ -63,13 +76,14 @@ class Phonebook extends Component {
   render() {
     const { filter } = this.state;
     const contacts = this.getContacts();
+    const isShowFilter = contacts.length > 1;
 
     return (
       <div className={styles.componenet}>
         <h1 className={styles.title}>Phonebook</h1>
         <AddContact onSubmit={this.handleAddContact} />
         <h2 className={styles.title}>Contacts</h2>
-        <Filter filter={filter} onChange={this.handleOnFiler} />
+        {isShowFilter && <Filter filter={filter} onChange={this.handleOnFiler} />}
         <Contacts contctsList={contacts} onDelete={this.handleDeleteContact} />
       </div>
     );
