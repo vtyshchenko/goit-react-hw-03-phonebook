@@ -74,8 +74,8 @@ class Phonebook extends Component {
   }
 
   render() {
-    const { filter } = this.state;
-    const contacts = this.getContacts();
+    const { filter, contacts } = this.state;
+    const contactsFiltered = this.getContacts();
     const isShowFilter = contacts.length > 1;
 
     return (
@@ -84,7 +84,7 @@ class Phonebook extends Component {
         <AddContact onSubmit={this.handleAddContact} />
         <h2 className={styles.title}>Contacts</h2>
         {isShowFilter && <Filter filter={filter} onChange={this.handleOnFiler} />}
-        <Contacts contctsList={contacts} onDelete={this.handleDeleteContact} />
+        <Contacts contctsList={contactsFiltered} onDelete={this.handleDeleteContact} />
       </div>
     );
   }
